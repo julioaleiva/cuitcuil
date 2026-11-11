@@ -1,0 +1,4 @@
+.vercel/
+.npm-cache/
+node_modules/
+*.log
