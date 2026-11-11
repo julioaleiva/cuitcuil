@@ -55,6 +55,14 @@ Las pruebas cubren los prefijos, ceros a la izquierda, los resultados extremos d
 | `icon.svg` | Ícono propio para la pestaña y la interfaz |
 | `calculator.test.mjs` | Pruebas del cálculo |
 
-## Publicación en Vercel
+## Sitio publicado y despliegue
 
-El sitio es estático. Al importar este repositorio en Vercel, seleccioná **Other** como framework, dejá vacío el comando de compilación y usá `.` como directorio de salida. El archivo `vercel.json` también declara esa configuración.
+La versión de producción está disponible en **[cuitcuil.vercel.app](https://cuitcuil.vercel.app/)**.
+
+El sitio es estático. En Vercel se usa **Other** como framework, sin comando de compilación y con `.` como directorio de salida; `vercel.json` declara esa configuración. `.vercelignore` evita subir archivos de sesión, cachés, pruebas y documentación local.
+
+Esta publicación se hizo con la CLI oficial de Vercel desde la carpeta del proyecto. La conexión automática de Vercel con el repositorio de GitHub no tiene acceso a este repositorio, por lo que un nuevo `git push` **no** actualiza el sitio por sí solo. Para publicar cambios, desde esta carpeta ejecutá:
+
+```bash
+vercel deploy --prod
+```
