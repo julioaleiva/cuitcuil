@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#103b8c" />
-    <meta name="description" content="Calculá el dígito verificador de un CUIL o CUIT estimado a partir de tu DNI y la regla de prefijos 20/27." />
+    <meta name="description" content="Calculá variantes matemáticas de CUIL o CUIT con los prefijos 20, 23, 24, 27, 30, 33 y 34." />
     <title>CUIT CUIL · Calculadora</title>
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
@@ -24,7 +24,7 @@
         <section class="intro" aria-labelledby="page-title">
           <div class="eyebrow"><span class="eyebrow-dot"></span> HERRAMIENTA GRATUITA</div>
           <h1 id="page-title">Calculá tu <span>CUIL o CUIT</span></h1>
-          <p>Ingresá tu DNI, elegí una opción y obtené un número estimado en segundos. Sin registro y desde cualquier dispositivo.</p>
+          <p>Ingresá el número base, elegí una opción y conocé las combinaciones matemáticas posibles. Sin registro y desde cualquier dispositivo.</p>
         </section>
 
         <section class="calculator-card" aria-labelledby="form-title">
@@ -38,7 +38,7 @@
 
           <form id="calculator-form" novalidate>
             <div class="field-group">
-              <label for="dni">Número de DNI</label>
+              <label for="dni" id="identifier-label">Número de DNI</label>
               <div class="input-wrap">
                 <span class="input-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none"><rect x="2.75" y="4.75" width="18.5" height="14.5" rx="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="8.5" cy="10.25" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 15.5c.5-1.4 1.55-2.1 3-2.1s2.5.7 3 2.1M14.5 9h4M14.5 12h4M14.5 15h2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -50,16 +50,24 @@
             </div>
 
             <fieldset class="field-group sex-group" aria-describedby="sex-help sex-error">
-              <legend>Sexo para esta estimación</legend>
-              <p class="field-help" id="sex-help">Aplicamos la regla solicitada: M usa 20 y F usa 27.</p>
+              <legend>Tipo de consulta</legend>
+              <p class="field-help" id="sex-help">Para personas, el prefijo asignado no depende del sexo o género.</p>
               <div class="options">
                 <label class="option">
-                  <input type="radio" name="sex" value="M" required />
-                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>Masculino</strong><small>Prefijo 20</small></span></span>
+                  <input type="radio" name="category" value="M" required />
+                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>Masculino</strong><small>Persona humana</small></span></span>
                 </label>
                 <label class="option">
-                  <input type="radio" name="sex" value="F" required />
-                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>Femenino</strong><small>Prefijo 27</small></span></span>
+                  <input type="radio" name="category" value="F" required />
+                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>Femenino</strong><small>Persona humana</small></span></span>
+                </label>
+                <label class="option">
+                  <input type="radio" name="category" value="X" required />
+                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>No binario (X)</strong><small>Persona humana</small></span></span>
+                </label>
+                <label class="option">
+                  <input type="radio" name="category" value="COMPANY" required />
+                  <span class="option-visual"><span class="radio-mark" aria-hidden="true"></span><span><strong>Empresa o sociedad</strong><small>Número de entidad</small></span></span>
                 </label>
               </div>
               <p class="field-error" id="sex-error" role="alert" hidden></p>
@@ -73,22 +81,18 @@
           </form>
 
           <div id="result" class="result" aria-live="polite" hidden>
-            <div class="result-top"><span class="result-label">NÚMERO ESTIMADO</span><span class="result-check">✓ Dígito calculado</span></div>
-            <div class="result-main"><output id="result-number" for="dni"></output><button id="copy-button" class="copy-button" type="button" aria-label="Copiar número calculado"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Copiar</span></button></div>
-            <p id="result-detail" class="result-detail"></p>
-          </div>
-
-          <div id="no-result" class="no-result" role="status" hidden>
-            <strong>No hay un dígito válido con ese prefijo.</strong>
-            <p>Para esta combinación, el cálculo da 10. Un dígito verificador debe ocupar una sola posición. Consultá tu número asignado en la constancia oficial.</p>
+            <div class="result-top"><span class="result-label">COMBINACIONES MATEMÁTICAS</span><span class="result-check">✓ Módulo 11</span></div>
+            <h3 id="result-heading">Variantes posibles</h3>
+            <p class="result-intro" id="result-intro"></p>
+            <div id="variant-list" class="variant-list"></div>
           </div>
         </section>
 
-        <div class="privacy-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8"/></svg><span>Tu DNI se procesa en este navegador. No lo enviamos ni lo guardamos.</span></div>
+        <div class="privacy-line"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8"/></svg><span>El número ingresado se procesa en este navegador. No lo enviamos ni lo guardamos.</span></div>
 
         <aside class="notice" aria-labelledby="notice-title">
           <span class="notice-icon" aria-hidden="true">i</span>
-          <div><h2 id="notice-title">Importante sobre el resultado</h2><p>Desde 2021, ANSES y ARCA asignan prefijos de forma genérica y aleatoria. Este cálculo usa 20 para M y 27 para F por elección de esta herramienta, por lo que puede diferir del número que tenés asignado. Confirmalo en la <a href="https://www.argentina.gob.ar/descarga-constancia-cuil" target="_blank" rel="noopener noreferrer">constancia oficial de CUIL</a> o en <a href="https://www.arca.gob.ar/" target="_blank" rel="noopener noreferrer">ARCA</a>.</p></div>
+          <div><h2 id="notice-title">Importante sobre el resultado</h2><p>Desde 2021, ANSES y ARCA asignan prefijos de personas de forma genérica y aleatoria. Estas variantes solo pasan el cálculo matemático: no indican cuál fue asignada ni si existe. El número base de una empresa tampoco se deduce del DNI de sus integrantes. Confirmá la clave real en la <a href="https://www.argentina.gob.ar/descarga-constancia-cuil" target="_blank" rel="noopener noreferrer">constancia oficial de CUIL</a> o en <a href="https://www.arca.gob.ar/" target="_blank" rel="noopener noreferrer">ARCA</a>.</p></div>
         </aside>
       </main>
 

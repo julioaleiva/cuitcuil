@@ -1,16 +1,19 @@
-/** Calcula una clave estimada con los prefijos fijos solicitados. */
-export function calculateCuitCuil(dniInput, sex) {
-  const dni = String(dniInput).trim();
-  if (!/^\d{1,8}$/.test(dni) || !/[1-9]/.test(dni)) {
-    throw new RangeError("Ingresá un DNI de 1 a 8 dígitos, mayor que cero y sin puntos.");
+export const PERSON_PREFIXES = Object.freeze(["20", "23", "24", "27"]);
+export const COMPANY_PREFIXES = Object.freeze(["30", "33", "34"]);
+const ALL_PREFIXES = [...PERSON_PREFIXES, ...COMPANY_PREFIXES];
+
+/** Calcula una combinación matemática para un prefijo permitido. */
+export function calculateForPrefix(numberInput, prefix) {
+  const number = String(numberInput).trim();
+  if (!/^\d{1,8}$/.test(number) || !/[1-9]/.test(number)) {
+    throw new RangeError("Ingresá un número base de 1 a 8 dígitos, mayor que cero y sin puntos.");
   }
-  if (sex !== "M" && sex !== "F") {
-    throw new RangeError("Elegí Masculino o Femenino.");
+  if (!ALL_PREFIXES.includes(prefix)) {
+    throw new RangeError("Elegí un prefijo válido.");
   }
 
-  const prefix = sex === "M" ? "20" : "27";
-  const paddedDni = dni.padStart(8, "0");
-  const base = prefix + paddedDni;
+  const paddedNumber = number.padStart(8, "0");
+  const base = prefix + paddedNumber;
   // Pesos del procedimiento aportado. Cada uno equivale a 11 menos
   // el peso convencional 5,4,3,2,7,6,5,4,3,2, respectivamente.
   const weights = [6, 7, 8, 9, 4, 5, 6, 7, 8, 9];
@@ -18,14 +21,42 @@ export function calculateCuitCuil(dniInput, sex) {
   const checkDigit = sum % 11;
 
   if (checkDigit === 10) {
-    return { prefix, paddedDni, checkDigit: null, formatted: null, raw: null };
+    return { prefix, paddedNumber, checkDigit: null, formatted: null, raw: null };
   }
 
   return {
     prefix,
-    paddedDni,
+    paddedNumber,
     checkDigit,
-    formatted: `${prefix}-${paddedDni}-${checkDigit}`,
+    formatted: `${prefix}-${paddedNumber}-${checkDigit}`,
     raw: `${base}${checkDigit}`,
   };
+}
+
+/** Conserva la regla inicial M→20 y F→27 como referencia histórica. */
+export function calculateCuitCuil(dniInput, sex) {
+  if (sex !== "M" && sex !== "F") {
+    throw new RangeError("Elegí Masculino o Femenino.");
+  }
+  return calculateForPrefix(dniInput, sex === "M" ? "20" : "27");
+}
+
+/** Devuelve las variantes del tipo elegido; no identifica la clave asignada. */
+export function calculateVariants(numberInput, category) {
+  if (!["M", "F", "X", "COMPANY"].includes(category)) {
+    throw new RangeError("Elegí una opción válida.");
+  }
+  const number = String(numberInput).trim();
+  if (category === "COMPANY" && (!/^\d{8}$/.test(number) || !/[1-9]/.test(number))) {
+    throw new RangeError("Ingresá los 8 dígitos del número base de la entidad.");
+  }
+  const historicalPrefix = category === "M" ? "20" : category === "F" ? "27" : null;
+  const prefixes = category === "COMPANY" ? COMPANY_PREFIXES : PERSON_PREFIXES;
+  const ordered = historicalPrefix
+    ? [historicalPrefix, ...prefixes.filter((prefix) => prefix !== historicalPrefix)]
+    : prefixes;
+  return ordered.map((prefix) => ({
+    ...calculateForPrefix(number, prefix),
+    historical: prefix === historicalPrefix,
+  }));
 }
