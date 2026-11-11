@@ -1,0 +1,11 @@
+.git/
+.gitignore
+.npm-cache/
+.vercel/
+.vercel-cli-cache/
+.vercel-cli-config/
+.vercel-cli-data/
+.env*
+node_modules/
+README.md
+calculator.test.mjs
