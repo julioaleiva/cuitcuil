@@ -1,4 +1,10 @@
 .vercel/
 .npm-cache/
+.vercel-cli-cache/
+.vercel-cli-config/
+.vercel-cli-data/
 node_modules/
 *.log
+
+.vercel
+.env*
