@@ -50,13 +50,12 @@ export function calculateVariants(numberInput, category) {
   if (category === "COMPANY" && (!/^\d{8}$/.test(number) || !/[1-9]/.test(number))) {
     throw new RangeError("Ingresá los 8 dígitos del número base de la entidad.");
   }
-  const historicalPrefix = category === "M" ? "20" : category === "F" ? "27" : null;
-  const prefixes = category === "COMPANY" ? COMPANY_PREFIXES : PERSON_PREFIXES;
-  const ordered = historicalPrefix
-    ? [historicalPrefix, ...prefixes.filter((prefix) => prefix !== historicalPrefix)]
-    : prefixes;
-  return ordered.map((prefix) => ({
+  const assumedPrefix = category === "M" ? "20" : category === "F" ? "27" : null;
+  const prefixes = assumedPrefix
+    ? [assumedPrefix]
+    : category === "COMPANY" ? COMPANY_PREFIXES : PERSON_PREFIXES;
+  return prefixes.map((prefix) => ({
     ...calculateForPrefix(number, prefix),
-    historical: prefix === historicalPrefix,
+    assumed: prefix === assumedPrefix,
   }));
 }

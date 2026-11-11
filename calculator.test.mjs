@@ -23,16 +23,18 @@ test("informa el caso sin dígito decimal para cada prefijo", () => {
   assert.equal(calculateCuitCuil("9", "F").checkDigit, null);
 });
 
-test("incluye los cuatro prefijos de personas y los tres de entidades", () => {
+test("muestra uno para M y F, cuatro para X y tres para entidades", () => {
+  assert.deepEqual(calculateVariants("12345678", "M").map((item) => item.formatted), ["20-12345678-6"]);
+  assert.deepEqual(calculateVariants("12345678", "F").map((item) => item.formatted), ["27-12345678-0"]);
   assert.deepEqual(calculateVariants("12345678", "X").map((item) => item.formatted), [
     "20-12345678-6", "23-12345678-5", "24-12345678-1", "27-12345678-0",
   ]);
   assert.deepEqual(calculateVariants("12345678", "COMPANY").map((item) => item.formatted), [
     "30-12345678-1", "33-12345678-0", "34-12345678-7",
   ]);
-  assert.equal(calculateVariants("12345678", "F")[0].prefix, "27");
-  assert.equal(calculateVariants("12345678", "M")[0].prefix, "20");
-  assert.equal(calculateVariants("12345678", "X").some((item) => item.historical), false);
+  assert.equal(calculateVariants("12345678", "M")[0].assumed, true);
+  assert.equal(calculateVariants("12345678", "F")[0].assumed, true);
+  assert.equal(calculateVariants("12345678", "X").some((item) => item.assumed), false);
 });
 
 test("rechaza DNI, números de entidad y opciones inválidos", () => {

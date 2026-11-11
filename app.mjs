@@ -8,6 +8,8 @@ const categoryHelp = document.querySelector("#sex-help");
 const numberError = document.querySelector("#dni-error");
 const categoryError = document.querySelector("#sex-error");
 const result = document.querySelector("#result");
+const resultLabel = document.querySelector("#result-label");
+const resultHeading = document.querySelector("#result-heading");
 const resultIntro = document.querySelector("#result-intro");
 const variantList = document.querySelector("#variant-list");
 let wasCompany = false;
@@ -44,17 +46,17 @@ function updateInputContext() {
 
 function makeVariantCard(variant) {
   const card = document.createElement("article");
-  card.className = `variant-card${variant.historical ? " variant-card--historical" : ""}${variant.raw ? "" : " variant-card--unavailable"}`;
+  card.className = `variant-card${variant.assumed ? " variant-card--assumed" : ""}${variant.raw ? "" : " variant-card--unavailable"}`;
 
   const top = document.createElement("div");
   top.className = "variant-top";
   const label = document.createElement("span");
   label.textContent = `PREFIJO ${variant.prefix}`;
   top.append(label);
-  if (variant.historical) {
+  if (variant.assumed) {
     const badge = document.createElement("span");
-    badge.className = "historical-badge";
-    badge.textContent = "Referencia histórica";
+    badge.className = "assumed-badge";
+    badge.textContent = "Prefijo asumido";
     top.append(badge);
   }
 
@@ -127,11 +129,18 @@ form.addEventListener("submit", (event) => {
   }
   if (!category) return;
 
+  resultLabel.textContent = category === "M" || category === "F"
+    ? "CÁLCULO MATEMÁTICO"
+    : "COMBINACIONES MATEMÁTICAS";
+  resultHeading.textContent = category === "M" || category === "F"
+    ? "Resultado calculado"
+    : category === "COMPANY" ? "Prefijos de entidad" : "Variantes posibles";
   resultIntro.textContent = category === "COMPANY"
     ? "Se calculan 30, 33 y 34 sobre el número base ingresado. ARCA determina la CUIT efectivamente asignada."
     : category === "X"
       ? "Se calculan 20, 23, 24 y 27. Ningún prefijo identifica actualmente el género ni confirma el CUIL asignado."
-      : "Se calculan 20, 23, 24 y 27. La primera opción refleja la regla histórica; hoy el prefijo se asigna sin relación con el sexo o género.";
+      : `Se asume el prefijo ${category === "M" ? "20" : "27"} según la regla histórica. El cálculo no confirma cuál CUIL fue asignado actualmente.`;
+  variantList.classList.toggle("variant-list--single", variants.length === 1);
   variantList.append(...variants.map(makeVariantCard));
   result.hidden = false;
 });

@@ -2,12 +2,12 @@
 
 Aplicación web responsive para calcular **combinaciones matemáticas de CUIL/CUIT**. Ofrece las cuatro opciones del formulario: Masculino, Femenino, No binario (X) y Empresa o sociedad. Usa HTML, CSS y JavaScript sin dependencias de producción. El cálculo ocurre íntegramente en el navegador; la aplicación no envía ni almacena el número ingresado.
 
-> **Alcance:** para personas se calculan los prefijos **20, 23, 24 y 27**, cualquiera sea la opción de sexo o género. M y F solo colocan primero el prefijo de la regla histórica solicitada (20 y 27 respectivamente). Desde 2021, ANSES y ARCA asignan esos prefijos de forma genérica y aleatoria, sin relación con el sexo o género. Para empresas se calculan **30, 33 y 34** sobre un número base de 8 dígitos que la entidad ya conozca; no se obtiene del DNI de sus integrantes. Ninguna combinación matemática demuestra que la clave haya sido asignada o esté vigente. Verificá la clave real en la [constancia oficial de CUIL](https://www.argentina.gob.ar/descarga-constancia-cuil) o ante [ARCA](https://www.arca.gob.ar/).
+> **Alcance:** Masculino calcula solo con el prefijo supuesto **20** y Femenino solo con **27**, según la regla histórica solicitada. No binario (X) muestra las cuatro variantes personales **20, 23, 24 y 27**. Desde 2021, ANSES y ARCA asignan esos prefijos de forma genérica y aleatoria, sin relación con el sexo o género. Para empresas se calculan **30, 33 y 34** sobre un número base de 8 dígitos que la entidad ya conozca; no se obtiene del DNI de sus integrantes. Ninguna combinación matemática demuestra que la clave haya sido asignada o esté vigente. Verificá la clave real en la [constancia oficial de CUIL](https://www.argentina.gob.ar/descarga-constancia-cuil) o ante [ARCA](https://www.arca.gob.ar/).
 
 ## Cómo funciona
 
 1. Para personas se valida un DNI de 1 a 8 cifras, mayor que cero, y se completa con ceros a la izquierda hasta obtener 8 posiciones. Para empresas se exige un número base de exactamente 8 cifras, mayor que cero.
-2. Se antepone cada prefijo aplicable: `20`, `23`, `24`, `27` para personas; `30`, `33`, `34` para empresas. Cada uno forma una base de 10 dígitos.
+2. Se antepone el prefijo de la opción: `20` para Masculino, `27` para Femenino, `20`, `23`, `24` y `27` para No binario (X), o `30`, `33` y `34` para empresas. Cada prefijo forma una base de 10 dígitos.
 3. Se multiplica cada dígito por los pesos `6, 7, 8, 9, 4, 5, 6, 7, 8, 9` y se suman los productos.
 4. El resto de dividir la suma por 11 es el dígito verificador. Si el resto es `10`, no existe un dígito decimal para esa combinación de prefijo y número base: la aplicación informa el caso para esa variante.
 
@@ -15,7 +15,7 @@ Los pesos son los del procedimiento `scl_verifica_dig_CUIT_new` aportado como ba
 
 ### Ejemplo
 
-Para DNI `12345678`, la variante con prefijo 20 tiene base `2012345678`, dígito verificador `6` y resultado `20-12345678-6`. La misma base numérica produce `23-12345678-5`, `24-12345678-1` y `27-12345678-0` con los otros prefijos de persona. Solo una constancia oficial permite saber cuál se asignó realmente.
+Para DNI `12345678`, Masculino muestra `20-12345678-6` y Femenino muestra `27-12345678-0`. No binario (X) muestra además `23-12345678-5` y `24-12345678-1`, junto con las variantes 20 y 27. Solo una constancia oficial permite saber cuál se asignó realmente.
 
 ## Normativa y fuentes
 
